@@ -3,21 +3,44 @@ import 'firebase/firestore';
 import 'firebase/auth';
 
 const config = {
-    apiKey: "AIzaSyCKzMcshKkv4yHQkpJ74ec6xu3kns1f4LY",
-    authDomain: "cloth-ecommerce-db.firebaseapp.com",
-    projectId: "cloth-ecommerce-db",
-    storageBucket: "cloth-ecommerce-db.appspot.com",
-    messagingSenderId: "751719297463",
-    appId: "1:751719297463:web:3274a0ae28c187bd4cf832"
+  apiKey: "AIzaSyCKzMcshKkv4yHQkpJ74ec6xu3kns1f4LY",
+  authDomain: "cloth-ecommerce-db.firebaseapp.com",
+  projectId: "cloth-ecommerce-db",
+  storageBucket: "cloth-ecommerce-db.appspot.com",
+  messagingSenderId: "751719297463",
+  appId: "1:751719297463:web:3274a0ae28c187bd4cf832"
+}
+
+export const createUserProfileDocument = async (userAuth, additionalData) => {
+  if (!userAuth) return;
+  const userRef = firestore.doc(`users/${userAuth.uid}`);
+  const snapShot = await userRef.get();
+  if(!snapShot.exists) {
+    const { displayName, email} = userAuth;
+    const createdAt = new Date();
+
+    try {
+      await userRef.set({
+        displayName,
+        email,
+        createdAt,
+        ...additionalData
+      })
+    } catch (err) {
+      console.log('error creating user', err.message);
+    }
   }
 
-  firebase.initializeApp(config);
+  return userRef;
+}
 
-  export const auth = firebase.auth();
-  export const firestore = firebase.firestore();
+firebase.initializeApp(config);
 
-  const provider = new firebase.auth.GoogleAuthProvider();
-  provider.setCustomParameters({prompt: 'select_account'});
-  export const signInWithGoogle = () => auth.signInWithPopup(provider);
+export const auth = firebase.auth();
+export const firestore = firebase.firestore();
 
-  export default firebase;
+const provider = new firebase.auth.GoogleAuthProvider();
+provider.setCustomParameters({prompt: 'select_account'});
+export const signInWithGoogle = () => auth.signInWithPopup(provider);
+
+export default firebase;

@@ -1,4 +1,4 @@
-#Cloth Ecommerce
+# Cloth Ecommerce Project
 
 Made for the Andre Neagoie Complete React Developer in 2021 (w/ Redux, Hooks, GraphQL). 
 
